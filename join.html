@@ -1,5 +1,4 @@
-<!DOCTYPE html>
-<html>
+<!DOCTYPE html><html>
 <head>
   <title>Join Game</title>
   <style>
@@ -7,7 +6,7 @@
       font-family: Arial, sans-serif;
       text-align: center;
       padding: 30px;
-      background: #f9f9f9;
+      background: #f1f1f1;
     }
     #name {
       font-size: 28px;
@@ -20,24 +19,28 @@
       margin-top: 10px;
       animation: blink 1.5s infinite;
     }
-    #status {
-      margin-top: 40px;
-      font-size: 18px;
-      color: #333;
-    }
     @keyframes blink {
-      0%, 50%, 100% { opacity: 1; }
-      25%, 75% { opacity: 0; }
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0; }
     }
-  </style>
-</head>
-<body>
-  <h1>Join Game</h1>
-  <div id="name">...</div>
-  <div id="role">(Waiting...)</div>
-  <div id="status">Waiting for game to start...</div>
+  </style>  <!-- Firebase SDKs -->  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.7.3/firebase-app.js";
+    import { getDatabase, ref, push, onValue } from "https://www.gstatic.com/firebasejs/11.7.3/firebase-database.js";
 
-  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyAwagFCtJc6ckck1CPZOv--LDml59fwPOE",
+      authDomain: "draw-guess-game-a8162.firebaseapp.com",
+      projectId: "draw-guess-game-a8162",
+      storageBucket: "draw-guess-game-a8162.firebasestorage.app",
+      messagingSenderId: "164122988514",
+      appId: "1:164122988514:web:2c20f94a624eef5c8373bb",
+      measurementId: "G-MYCV7YC30G",
+      databaseURL: "https://draw-guess-game-a8162-default-rtdb.firebaseio.com"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const database = getDatabase(app);
+
     const funnyNames = [
       "1099Sniper", "K1Crusher", "PFICPundit", "W2Wizard", "CarrybackKid",
       "StateApportionator", "EstimatedEagle", "DeferredDemon", "FormFilerX", "TaxBracketBandit",
@@ -48,13 +51,7 @@
       return funnyNames[Math.floor(Math.random() * funnyNames.length)];
     }
 
-    const nameDiv = document.getElementById('name');
-    const roleDiv = document.getElementById('role');
-
-    // Assign random name on page load
     const assignedName = getRandomName();
-    nameDiv.textContent = assignedName;
-    roleDiv.textContent = '(Waiting...)';
-  </script>
-</body>
-</html>
+    document.addEventListener("DOMContentLoaded", () => {
+      document.getElementById("name").textContent = assignedName;
+      document.getElementById("role").textContent
