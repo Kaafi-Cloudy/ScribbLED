@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Host Lobby</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      padding: 30px;
+      background: #f0f0f0;
+    }
+    select, button {
+      padding: 10px;
+      font-size: 16px;
+      margin-top: 10px;
+    }
+    #playerList {
+      margin-top: 30px;
+      font-size: 18px;
+    }
+    .player-slot {
+      margin: 8px 0;
+    }
+    #startBtn {
+      margin-top: 20px;
+      padding: 10px 20px;
+      font-size: 18px;
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <h1>Host Game</h1>
+
+  <label for="playerCount">Select number of players:</label><br>
+  <select id="playerCount">
+    <option value="2">2</option>
+    <option value="3">3</option>
+    <option value="4">4</option>
+    <option value="5" selected>5</option>
+    <option value="6">6</option>
+    <option value="7">7</option>
+    <option value="8">8</option>
+    <option value="9">9</option>
+    <option value="10">10</option>
+  </select>
+
+  <div id="playerList"></div>
+
+  <button id="startBtn">Start Game</button>
+
+  <script>
+    const funnyNames = [
+      "1099Sniper", "K1Crusher", "PFICPundit", "W2Wizard", "CarrybackKid",
+      "StateApportionator", "EstimatedEagle", "DeferredDemon", "FormFilerX", "TaxBracketBandit",
+      "WithholdingWhiz", "ProFormaPhantom", "ScheduleCSlayer", "ExtensionExpert", "FilingDeadlineDodger"
+    ];
+
+    const playerList = document.getElementById("playerList");
+    const playerCountSelect = document.getElementById("playerCount");
+    const startBtn = document.getElementById("startBtn");
+
+    let selectedCount = parseInt(playerCountSelect.value);
+    let joinedPlayers = [];
+
+    function updatePlayerList() {
+      playerList.innerHTML = "";
+      for (let i = 0; i < selectedCount; i++) {
+        const name = joinedPlayers[i] || `Waiting for Player ${i + 1}...`;
+        const div = document.createElement("div");
+        div.className = "player-slot";
+        div.textContent = name;
+        playerList.appendChild(div);
+      }
+      startBtn.style.display = (joinedPlayers.length === selectedCount) ? "inline-block" : "none";
+    }
+
+    playerCountSelect.addEventListener("change", () => {
+      selectedCount = parseInt(playerCountSelect.value);
+      joinedPlayers = []; // Reset on count change
+      updatePlayerList();
+    });
+
+    // Simulate new player joins (manual for now, Firebase will replace this)
+    setInterval(() => {
+      if (joinedPlayers.length < selectedCount) {
+        const nextName = funnyNames[Math.floor(Math.random() * funnyNames.length)];
+        if (!joinedPlayers.includes(nextName)) {
+          joinedPlayers.push(nextName);
+          updatePlayerList();
+        }
+      }
+    }, 3000); // Add fake player every 3 seconds for testing
+  </script>
+</body>
+</html>
