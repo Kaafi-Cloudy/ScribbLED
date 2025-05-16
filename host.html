@@ -1,115 +1,107 @@
-<!DOCTYPE html>
-<html>
+<!DOCTYPE html><html>
 <head>
-  <title>Host Lobby</title>
+  <title>Host Game</title>
   <style>
     body {
       font-family: Arial, sans-serif;
       text-align: center;
       padding: 30px;
-      background: #f0f0f0;
+      background-color: #eaeff2;
     }
-    select, button {
+    h1 {
+      font-size: 36px;
+      margin-bottom: 30px;
+    }
+    select {
       padding: 10px;
-      font-size: 16px;
-      margin-top: 10px;
+      font-size: 18px;
     }
     #playerList {
       margin-top: 30px;
-      font-size: 18px;
     }
     .player-slot {
-      margin: 8px 0;
+      font-size: 20px;
+      margin: 10px 0;
     }
     #startBtn {
-      margin-top: 20px;
-      padding: 10px 20px;
-      font-size: 18px;
       display: none;
+      margin-top: 30px;
+      padding: 12px 24px;
+      font-size: 18px;
+      background-color: #0077cc;
+      color: white;
+      border: none;
+      border-radius: 8px;
     }
-  </style>
-</head>
-<body>
-  <h1>Host Game</h1>
+  </style>  <!-- Firebase SDKs -->  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.7.3/firebase-app.js";
+    import { getDatabase, ref, set, onValue } from "https://www.gstatic.com/firebasejs/11.7.3/firebase-database.js";
 
-  <label for="playerCount">Select number of players:</label><br>
-  <select id="playerCount">
-    <option value="2">2</option>
-    <option value="3">3</option>
-    <option value="4">4</option>
-    <option value="5" selected>5</option>
-    <option value="6">6</option>
-    <option value="7">7</option>
-    <option value="8">8</option>
-    <option value="9">9</option>
-    <option value="10">10</option>
-  </select>
+    const firebaseConfig = {
+      apiKey: "AIzaSyAwagFCtJc6ckck1CPZOv--LDml59fwPOE",
+      authDomain: "draw-guess-game-a8162.firebaseapp.com",
+      projectId: "draw-guess-game-a8162",
+      storageBucket: "draw-guess-game-a8162.firebasestorage.app",
+      messagingSenderId: "164122988514",
+      appId: "1:164122988514:web:2c20f94a624eef5c8373bb",
+      measurementId: "G-MYCV7YC30G",
+      databaseURL: "https://draw-guess-game-a8162-default-rtdb.firebaseio.com"
+    };
 
-  <div id="playerList"></div>
+    const app = initializeApp(firebaseConfig);
+    const database = getDatabase(app);
 
-  <button id="startBtn">Start Game</button>
+    let playerCount = 2;
+    const playerListDiv = document.getElementById('playerList');
+    const startBtn = document.getElementById('startBtn');
 
-  <script>
-    const funnyNames = [
-      "1099Sniper", "K1Crusher", "PFICPundit", "W2Wizard", "CarrybackKid",
-      "StateApportionator", "EstimatedEagle", "DeferredDemon", "FormFilerX", "TaxBracketBandit",
-      "WithholdingWhiz", "ProFormaPhantom", "ScheduleCSlayer", "ExtensionExpert", "FilingDeadlineDodger"
-    ];
-
-    const playerList = document.getElementById("playerList");
-    const playerCountSelect = document.getElementById("playerCount");
-    const startBtn = document.getElementById("startBtn");
-
-    let selectedCount = parseInt(playerCountSelect.value);
-    let joinedPlayers = [];
-
-    function updatePlayerList() {
-      playerList.innerHTML = "";
-      for (let i = 0; i < selectedCount; i++) {
-        const name = joinedPlayers[i] || `Waiting for Player ${i + 1}...`;
-        const div = document.createElement("div");
-        div.className = "player-slot";
-        div.textContent = name;
-        playerList.appendChild(div);
-      }
-      startBtn.style.display = (joinedPlayers.length === selectedCount) ? "inline-block" : "none";
-    }
-
-    playerCountSelect.addEventListener("change", () => {
-      selectedCount = parseInt(playerCountSelect.value);
-      joinedPlayers = []; // Reset on count change
-      updatePlayerList();
+    document.getElementById('playerCount').addEventListener('change', function () {
+      playerCount = parseInt(this.value);
+      set(ref(database, 'settings/playerCount'), playerCount);
+      renderWaitingSlots();
     });
 
-    // Simulate new player joins (manual for now, Firebase will replace this)
-    setInterval(() => {
-      if (joinedPlayers.length < selectedCount) {
-        const nextName = funnyNames[Math.floor(Math.random() * funnyNames.length)];
-        if (!joinedPlayers.includes(nextName)) {
-          joinedPlayers.push(nextName);
-          updatePlayerList();
-        }
+    function renderWaitingSlots() {
+      playerListDiv.innerHTML = '';
+      for (let i = 1; i <= playerCount; i++) {
+        const div = document.createElement('div');
+        div.className = 'player-slot';
+        div.innerText = `Waiting for Player ${i}...`;
+        playerListDiv.appendChild(div);
       }
-    }, 3000); // Add fake player every 3 seconds for testing
-  </script>
+    }
+
+    // Watch Firebase for player updates
+    onValue(ref(database, 'players'), (snapshot) => {
+      const data = snapshot.val() || {};
+      const names = Object.values(data);
+      if (names.length > 0) {
+        const slots = document.querySelectorAll('.player-slot');
+        names.forEach((name, i) => {
+          if (slots[i]) slots[i].innerText = name;
+        });
+      }
+      if (names.length === playerCount) {
+        startBtn.style.display = 'inline-block';
+      }
+    });
+
+    renderWaitingSlots();
+  </script></head>
+<body>
+  <h1>ScribbLED (Host)</h1>
+  <label for="playerCount">Select number of players: </label>
+  <select id="playerCount">
+    <option>2</option>
+    <option>3</option>
+    <option>4</option>
+    <option>5</option>
+    <option>6</option>
+    <option>7</option>
+    <option>8</option>
+    <option>9</option>
+    <option>10</option>
+  </select>  <div id="playerList"></div><button id="startBtn">Start Game</button>
+
 </body>
 </html>
-
-<script type="module">
-  // Import the functions you need from the SDKs you need
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/11.7.3/firebase-app.js";
-  import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.7.3/firebase-analytics.js";
-  // TODO: Add SDKs for Firebase products that you want to use
-  // https://firebase.google.com/docs/web/setup#available-libraries
-
-  // Your web app's Firebase configuration
-  // For Firebase JS SDK v7.20.0 and later, measurementId is optional
-  const firebaseConfig = {
-    apiKey: "AIzaSyAwagFCtJc6ckck1CPZOv--LDml59fwPOE",
-    authDomain: "draw-guess-game-a8162.firebaseapp.com",
-    projectId: "draw-guess-game-a8162",
-    storageBucket: "draw-guess-game-a8162.firebasestorage.app",
-    messagingSenderId: "164122988514",
-    appId: "1:164122988514:web:2c20f94a624eef5c8373bb",
-    measurementId: "G-MYCV7YC30G"
-  };
