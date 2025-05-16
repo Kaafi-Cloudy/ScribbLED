@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Join Game</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      padding: 30px;
+      background: #f9f9f9;
+    }
+    #name {
+      font-size: 28px;
+      font-weight: bold;
+      margin-top: 40px;
+    }
+    #role {
+      font-size: 20px;
+      color: #555;
+      margin-top: 10px;
+      animation: blink 1.5s infinite;
+    }
+    #status {
+      margin-top: 40px;
+      font-size: 18px;
+      color: #333;
+    }
+    @keyframes blink {
+      0%, 50%, 100% { opacity: 1; }
+      25%, 75% { opacity: 0; }
+    }
+  </style>
+</head>
+<body>
+  <h1>Join Game</h1>
+  <div id="name">...</div>
+  <div id="role">(Waiting...)</div>
+  <div id="status">Waiting for game to start...</div>
+
+  <script>
+    const funnyNames = [
+      "1099Sniper", "K1Crusher", "PFICPundit", "W2Wizard", "CarrybackKid",
+      "StateApportionator", "EstimatedEagle", "DeferredDemon", "FormFilerX", "TaxBracketBandit",
+      "WithholdingWhiz", "ProFormaPhantom", "ScheduleCSlayer", "ExtensionExpert", "FilingDeadlineDodger"
+    ];
+
+    function getRandomName() {
+      return funnyNames[Math.floor(Math.random() * funnyNames.length)];
+    }
+
+    const nameDiv = document.getElementById('name');
+    const roleDiv = document.getElementById('role');
+
+    // Assign random name on page load
+    const assignedName = getRandomName();
+    nameDiv.textContent = assignedName;
+    roleDiv.textContent = '(Waiting...)';
+  </script>
+</body>
+</html>
